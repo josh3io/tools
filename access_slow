@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ $2 ]
+then
+    LOGLINECOUNT=`tail -n $2 /logs/access_log|wc -l | cut -d\  -f1`
+else
+    LOGLINECOUNT=`wc -l /logs/access_log | cut -d\  -f1`
+fi
+echo LINES: $LOGLINECOUNT
+tail -n $LOGLINECOUNT /logs/access_log |perl -lne '/.*(?:GET|POST) (.+?)(?:\?| ).*timem=(\d+)/;$h{$1}{c}++;$h{$1}{t}+=$2/1000;$TOT+=$2/1000;}END{$TOT||=.0000001;for (sort {$h{$b}{t} <=> $h{$a}{t}} keys %h) { push @a, sprintf("%0.3f%%, %6d: %s",(100*$h{$_}{t}/$TOT),$h{$_}{t},$_);last if ++$i == '$1'} print $_ for reverse @a'
