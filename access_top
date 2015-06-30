@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $2 ]
+then
+    LOGLINECOUNT=`tail -n $2 /logs/access_log | wc -l | cut -d\  -f1`
+else 
+    LOGLINECOUNT=`wc -l /logs/access_log | cut -d\  -f1`
+fi
+echo LINES: $LOGLINECOUNT
+tail -n $LOGLINECOUNT /logs/access_log |cut -d\  -f5|cut -d\? -f1|sort|uniq -c|sort|tail -$1|perl -lne '/(\d+)/;printf "%0.3f%% %s\n", (100*$1/'$LOGLINECOUNT'),$_';
